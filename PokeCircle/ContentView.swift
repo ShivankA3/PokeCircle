@@ -18,27 +18,87 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+            ZStack {
+                // Background gradient
+                LinearGradient(
+                    colors: [.pokeBackgroundTop, .pokeBackgroundBottom],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+
+                List {
+                    Section {
+                        ForEach(items) { item in
+                            NavigationLink {
+                                Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+                                    .font(.cartoonBody)
+                                    .foregroundColor(.pokeText)
+                                    .padding()
+                                    .navigationTitle("Details")
+                            } label: {
+                                HStack(spacing: 12) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(LinearGradient(colors: [.pokePrimary, .pokeSecondary], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                            .frame(width: 44, height: 44)
+                                        Image(systemName: "sparkles")
+                                            .font(.system(size: 18, weight: .bold))
+                                            .foregroundColor(.white)
+                                    }
+
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(item.timestamp!, formatter: itemFormatter)
+                                            .font(.cartoonBody)
+                                            .foregroundColor(.pokeText)
+                                        HStack(spacing: 8) {
+                                            CartoonBadge(text: "New")
+                                            Text("Tap to view")
+                                                .font(.cartoonCaption)
+                                                .foregroundColor(.pokeSubtext)
+                                        }
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.pokeSubtext)
+                                }
+                                .padding(8)
+                                .cartoonCard(cornerRadius: 16)
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
+                            }
+                        }
+                        .onDelete(perform: deleteItems)
+                    } header: {
+                        Text("Your Feed")
+                            .font(.cartoonTitle)
+                            .foregroundColor(.pokeText)
                     }
                 }
-                .onDelete(perform: deleteItems)
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
             }
+            .navigationTitle("Feed")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
                     Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                        Label("Add", systemImage: "plus")
                     }
+                    .buttonStyle(CartoonButtonStyle(fill: .pokeAccent))
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {}) {
+                        Image(systemName: "line.3.horizontal")
+                    }
+                    .buttonStyle(CartoonButtonStyle(fill: .pokePrimary))
+                }
+                ToolbarItem(placement: .bottomBar) {
+                    Button(action: {}) {
+                        Label("Trade", systemImage: "bag")
+                    }
+                    .buttonStyle(CartoonButtonStyle(fill: .pokeSecondary))
                 }
             }
-            Text("Select an item")
         }
     }
 
@@ -84,3 +144,4 @@ private let itemFormatter: DateFormatter = {
 #Preview {
     ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }
+

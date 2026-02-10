@@ -12,6 +12,10 @@ import CoreData
 struct PokeCircleApp: App {
     let persistenceController = PersistenceController.shared
 
+    init() {
+        NavBarStyle.applyCartoonAppearance()
+    }
+
     var body: some Scene {
         WindowGroup {
             HomeView()
